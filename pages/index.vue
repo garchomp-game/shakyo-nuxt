@@ -2,7 +2,7 @@
   <div class="container my-4">
     <div class="row">
       <div class="col-md-12">
-          <textarea
+        <textarea
           class="form-control"
           :class="{ 'bg-danger': isInputBlocked }"
           v-model="inputText"
@@ -11,6 +11,10 @@
         <button class="btn btn-primary my-2" @click="startShakyo">
           shakyo開始
         </button>
+        <button class="btn btn-secondary my-2" @click="clearText">
+          クリア
+        </button>
+        <!-- クリアボタンの追加 -->
       </div>
     </div>
     <div v-if="showShakyo" class="alert-container">
@@ -34,15 +38,48 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
+import NuxtStorage from "nuxt-storage";
 
-const inputText = ref("");
-const sampleText = ref("ここにサンプルテキストを設定");
-const isInputBlocked = ref(false);
-const showShakyo = ref(false);
-const showSample = ref(true);
-const isTypo = ref(false);
-const isCompleted = ref(false);
+// nuxt-storageを使用して状態を永続化
+const inputText = ref(NuxtStorage.localStorage.getData("inputText") || "");
+const sampleText = ref(
+  NuxtStorage.localStorage.getData("sampleText") ||
+    "ここにサンプルテキストを設定",
+);
+const isInputBlocked = ref(
+  NuxtStorage.localStorage.getData("isInputBlocked") || false,
+);
+const showShakyo = ref(
+  NuxtStorage.localStorage.getData("showShakyo") !== null
+    ? NuxtStorage.localStorage.getData("showShakyo")
+    : false,
+);
+const showSample = ref(
+  NuxtStorage.localStorage.getData("showSample") !== null
+    ? NuxtStorage.localStorage.getData("showSample")
+    : true,
+);
+const isTypo = ref(NuxtStorage.localStorage.getData("isTypo") || false);
+const isCompleted = ref(
+  NuxtStorage.localStorage.getData("isCompleted") || false,
+);
+
+watch(showShakyo, (newVal) => {
+  NuxtStorage.localStorage.setData("showShakyo", newVal);
+});
+// showSampleの状態を監視してlocalStorageに保存
+watch(showSample, (newVal) => {
+  NuxtStorage.localStorage.setData("showSample", newVal);
+});
+
+// ユーザーの入力を監視してlocalStorageに保存
+watch(inputText, (newVal) => {
+  NuxtStorage.localStorage.setData("inputText", newVal);
+});
+watch(sampleText, (newVal) => {
+  NuxtStorage.localStorage.setData("sampleText", newVal);
+});
 
 const formattedSampleText = computed(() => {
   return sampleText.value.replace(/\n/g, "<br>");
@@ -51,9 +88,24 @@ const formattedSampleText = computed(() => {
 const startShakyo = () => {
   showShakyo.value = true;
   sampleText.value = inputText.value;
-  inputText.value = ""; // shakyo開始時に入力フィールドをクリア
+  inputText.value = "";
+  isInputBlocked.value = false;
+  isCompleted.value = false; // ここでisCompletedもリセットする
+  NuxtStorage.localStorage.setData("showShakyo", true);
+  NuxtStorage.localStorage.removeData("isCompleted");
+};
+
+const clearText = () => {
+  inputText.value = "";
   isInputBlocked.value = false;
   isCompleted.value = false;
+  isTypo.value = false;
+  showShakyo.value = false; // これもリセットする
+  NuxtStorage.localStorage.removeData("inputText");
+  NuxtStorage.localStorage.removeData("isInputBlocked");
+  NuxtStorage.localStorage.removeData("isCompleted");
+  NuxtStorage.localStorage.removeData("isTypo");
+  NuxtStorage.localStorage.removeData("showShakyo");
 };
 
 let typoTimeout = null;
@@ -63,7 +115,7 @@ const checkInput = () => {
     if (inputText.value !== sampleText.value.slice(0, inputText.value.length)) {
       inputText.value = inputText.value.slice(0, -1);
       isInputBlocked.value = true;
-      
+
       // 前のタイムアウトをクリア
       if (typoTimeout) {
         clearTimeout(typoTimeout);
@@ -82,6 +134,7 @@ const checkInput = () => {
       isInputBlocked.value = false;
       if (inputText.value === sampleText.value) {
         isCompleted.value = true; // 全部入力完了時
+        isTypo.value = false;
       }
     }
   }
