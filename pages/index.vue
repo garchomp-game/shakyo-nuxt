@@ -58,7 +58,7 @@ const showShakyo = ref(
 const showSample = ref(
   NuxtStorage.localStorage.getData("showSample") !== null
     ? NuxtStorage.localStorage.getData("showSample")
-    : true,
+    : false,
 );
 const isTypo = ref(NuxtStorage.localStorage.getData("isTypo") || false);
 const isCompleted = ref(
@@ -93,6 +93,11 @@ const startShakyo = () => {
   isCompleted.value = false; // ここでisCompletedもリセットする
   NuxtStorage.localStorage.setData("showShakyo", true);
   NuxtStorage.localStorage.removeData("isCompleted");
+};
+
+const toggleSample = () => {
+  showSample.value = !showSample.value;
+  NuxtStorage.localStorage.setData("showSample", showSample.value);
 };
 
 const clearText = () => {
