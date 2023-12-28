@@ -12,6 +12,8 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
+    "@nuxt/types": "^2.17.2",
+    "@nuxtjs/localforage": "^1.1.0",
     "nuxt": "^3.9.0",
     "pug": "^3.0.2",
     "pug-plain-loader": "^1.1.0",
