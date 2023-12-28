@@ -13,6 +13,52 @@
 - Node.js v18.19.0
 - npm 1.22.21
 
+
+## NVMとNode.jsのインストール
+
+このプロジェクトにはNode.jsのバージョン18.19.0が必要です。[NVM (Node Version Manager)](https://github.com/nvm-sh/nvm)を使用して、指定されたバージョンのNode.jsをインストールできます。
+
+### NVMのインストール
+
+#### Linux と macOS:
+
+1. ターミナルを開き、以下のコマンドを実行してください。
+
+   ```bash
+   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+   ```
+
+   または、以下のコマンドを使用します。
+
+   ```bash
+   wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+   ```
+
+2. ターミナルを再起動するか、次のコマンドを実行してNVMを有効にします。
+
+   ```bash
+   export NVM_DIR="$HOME/.nvm"
+   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+   ```
+
+#### Windows:
+
+Windowsでは、[nvm-windows](https://github.com/coreybutler/nvm-windows)を使用します。[リリースページ](https://github.com/coreybutler/nvm-windows/releases)から最新版をダウンロードしてインストールしてください。
+
+### Node.js v18.19.0のインストール
+
+1. ターミナルで以下のコマンドを実行して、Node.js v18.19.0をインストールします。
+
+   ```bash
+   nvm install 18.19.0
+   ```
+
+2. インストールしたバージョンを使用するために、次のコマンドを実行します。
+
+   ```bash
+   nvm use 18.19.0
+   ```
+
 ## セットアップ手順
 
 1. **リポジトリをクローンする**
